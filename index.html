@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Downtown Solutions — Roblox Services</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+    body { font-family: Arial, sans-serif; background:#0d0d0d; color:white; margin:0; }
+    header { padding:25px; text-align:center; background:#1a1a1a; }
+    h1 { margin:0; font-size:2.6rem; }
+    p { opacity:0.8; }
+    .container { max-width:750px; margin:40px auto; padding:25px; background:#1a1a1a; border-radius:12px; }
+    label { display:block; margin-top:18px; font-weight:bold; }
+    input, select, textarea {
+        width:100%; padding:12px; margin-top:6px; border-radius:6px; border:none;
+        background:#2a2a2a; color:white; font-size:1rem;
+    }
+    button {
+        margin-top:25px; width:100%; padding:14px; background:#4CAF50; border:none;
+        border-radius:6px; font-size:1.2rem; cursor:pointer; color:white;
+    }
+    button:hover { background:#45a049; }
+    #status { margin-top:15px; font-weight:bold; }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Downtown Solutions</h1>
+    <p>Affordable Roblox, Discord, and Development Services</p>
+</header>
+
+<div class="container">
+    <h2>Place an Order</h2>
+
+    <form id="orderForm">
+        <label>Roblox Username</label>
+        <input type="text" name="robloxUser" required>
+
+        <label>Discord Username</label>
+        <input type="text" name="discordUser" required>
+
+        <label>Select Service</label>
+        <select name="service" id="serviceDropdown" required></select>
+
+        <label>Extra Information</label>
+        <textarea name="extraInfo" rows="4" placeholder="Any details you want to add..."></textarea>
+
+        <button type="submit">Submit Order</button>
+    </form>
+
+    <p id="status"></p>
+</div>
+
+<script>
+    // FULL SERVICE LIST
+    const services = [
+        { name: "Roblox Scripting", price: "100 Robux per 500 lines / $1 USD" },
+        { name: "Roblox GUI Systems", price: "150 Robux / $1.50 USD" },
+        { name: "Roblox UI Scaling", price: "50 Robux (whole game)" },
+        { name: "Roblox UI Design", price: "200–2500 Robux / $2–$25 USD" },
+        { name: "Video Editing", price: "250 Robux / $2.50 USD" },
+        { name: "Game Promotion", price: "300 Robux / $3 USD (5,000 impressions)" },
+        { name: "Discord Server Setup", price: "250 Robux / $2.50 USD" },
+        { name: "Custom Discord Bot", price: "500 Robux / $5 USD" },
+        { name: "Custom Website", price: "800 Robux / $8 USD" }
+    ];
+
+    // YOUR WEBHOOK
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/1548044334358597753/v7Z1vGtH_EOsDbyA5KEL_RQ6YovHHeP0Y3aBztliP0nm_RwYbDN_7Tr9tZH5q5xXWBsE";
+
+    // Populate dropdown
+    const dropdown = document.getElementById("serviceDropdown");
+    services.forEach(s => {
+        const option = document.createElement("option");
+        option.value = `${s.name} (${s.price})`;
+        option.textContent = `${s.name} — ${s.price}`;
+        dropdown.appendChild(option);
+    });
+
+    // Handle form submission
+    document.getElementById("orderForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const data = {
+            robloxUser: e.target.robloxUser.value,
+            discordUser: e.target.discordUser.value,
+            service: e.target.service.value,
+            extraInfo: e.target.extraInfo.value
+        };
+
+        document.getElementById("status").textContent = "Submitting...";
+
+        try {
+            await fetch(WEBHOOK_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    content: `📦 **New Service Order — Downtown Solutions**\n\n**Roblox Username:** ${data.robloxUser}\n**Discord Username:** ${data.discordUser}\n**Service:** ${data.service}\n**Extra Info:** ${data.extraInfo || "None"}`
+                })
+            });
+
+            document.getElementById("status").textContent = "Order submitted successfully!";
+        } catch (err) {
+            document.getElementById("status").textContent = "Error submitting order.";
+        }
+    });
+</script>
+
+</body>
+</html>
